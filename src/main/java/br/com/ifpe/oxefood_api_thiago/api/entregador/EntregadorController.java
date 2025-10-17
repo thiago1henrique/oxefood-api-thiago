@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/entregador")
 @CrossOrigin
@@ -21,5 +23,15 @@ public class EntregadorController {
     public ResponseEntity<Entregador> save(@RequestBody EntregadorRequest request) {
         Entregador entregador = service.save(request.build());
         return new ResponseEntity<Entregador>(entregador, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public List<Entregador> listarTodos() {
+        return service.listarTodos();
+    }
+
+    @GetMapping("{id}")
+    public Entregador obterPorId(@PathVariable Long id) {
+        return service.obterPorID(id);
     }
 }
