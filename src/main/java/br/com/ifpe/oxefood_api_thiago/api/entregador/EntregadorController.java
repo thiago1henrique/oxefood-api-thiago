@@ -1,5 +1,6 @@
 package br.com.ifpe.oxefood_api_thiago.api.entregador;
 
+import br.com.ifpe.oxefood_api_thiago.modelo.cliente.ClienteService;
 import br.com.ifpe.oxefood_api_thiago.modelo.entregador.Entregador;
 import br.com.ifpe.oxefood_api_thiago.modelo.entregador.EntregadorService;
 import org.apache.coyote.Response;
@@ -18,6 +19,8 @@ public class EntregadorController {
 
     @Autowired
     private EntregadorService service;
+    @Autowired
+    private ClienteService clienteService;
 
     @PostMapping
     public ResponseEntity<Entregador> save(@RequestBody EntregadorRequest request) {
@@ -33,5 +36,11 @@ public class EntregadorController {
     @GetMapping("{id}")
     public Entregador obterPorId(@PathVariable Long id) {
         return service.obterPorID(id);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Entregador> update(@PathVariable("id") Long id, @RequestBody EntregadorRequest request) {
+        service.update(id, request.build());
+        return ResponseEntity.ok().build();
     }
 }
