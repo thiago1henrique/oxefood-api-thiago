@@ -19,8 +19,6 @@ public class EntregadorController {
 
     @Autowired
     private EntregadorService service;
-    @Autowired
-    private ClienteService clienteService;
 
     @PostMapping
     public ResponseEntity<Entregador> save(@RequestBody EntregadorRequest request) {
@@ -43,4 +41,11 @@ public class EntregadorController {
         service.update(id, request.build());
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
 }

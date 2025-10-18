@@ -1,5 +1,6 @@
 package br.com.ifpe.oxefood_api_thiago.modelo.produto;
 
+import br.com.ifpe.oxefood_api_thiago.modelo.entregador.Entregador;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,15 @@ public class ProdutoService {
         produto.setValorUnitario(produtoAlterado.getValorUnitario());
         produto.setTempoEntregaMinimo(produtoAlterado.getTempoEntregaMinimo());
         produto.setTempoEntregaMaximo(produtoAlterado.getTempoEntregaMaximo());
+        repository.save(produto);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+
+        Produto produto = repository.findById(id).get();
+        produto.setHabilitado(Boolean.FALSE);
+
         repository.save(produto);
     }
 }

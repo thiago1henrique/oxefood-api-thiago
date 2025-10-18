@@ -39,4 +39,10 @@ public class ProdutoController {
         service.update(id, request.build());
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.ok().build();
+    }
 }
