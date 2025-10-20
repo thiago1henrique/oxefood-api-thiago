@@ -1,5 +1,6 @@
 package br.com.ifpe.oxefood_api_thiago.api.produto;
 
+import br.com.ifpe.oxefood_api_thiago.modelo.categoriaProduto.CategoriaProdutoService;
 import br.com.ifpe.oxefood_api_thiago.modelo.produto.Produto;
 import br.com.ifpe.oxefood_api_thiago.modelo.produto.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,16 @@ public class ProdutoController {
     @Autowired
     private ProdutoService service;
 
+    @Autowired
+    private CategoriaProdutoService categoriaProdutoService;
+
     @PostMapping
     public ResponseEntity<Produto> save(@RequestBody ProdutoRequest request) {
-        Produto produto = service.save(request.build());
+
+        Produto produtoNovo = request.build();
+        produtoNovo.setCategoriaProduto(categoriaProdutoService.obterPorID(request.getIdCategoria()));
+
+        Produto produto = service.save(produtoNovo);
         return new ResponseEntity<Produto>(produto, HttpStatus.CREATED);
     }
 
@@ -36,7 +44,9 @@ public class ProdutoController {
 
     @PutMapping("{id}")
     public ResponseEntity<Produto> update(@PathVariable("id") Long id, @RequestBody ProdutoRequest request) {
-        service.update(id, request.build());
+        Produto produto = request.build();
+        produto.setCategoriaProduto(categoriaProdutoService.obterPorID(request.getIdCategoria()));
+        service.update(id, produto);
         return ResponseEntity.ok().build();
     }
 
