@@ -34,4 +34,10 @@ public class ProdutoController {
     public Produto obterPorId(@PathVariable Long id) {
         return produtoService.obterPorId(id);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Produto> update(@PathVariable("id") Long id, @RequestBody ProdutoRequest request) {
+        produtoService.update(id, request.build());
+        return ResponseEntity.ok().build();
+    }
 }
