@@ -86,6 +86,10 @@ public class ClienteService {
         return endereco;
     }
 
+    public List<EnderecoCliente> listarEnderecosCliente(Long clienteId) {
+        return repository.findById(clienteId).get().getEnderecos();
+    }
+
     @Transactional
     public EnderecoCliente atualizarEnderecoCliente(Long id, EnderecoCliente enderecoAlterado) {
 
