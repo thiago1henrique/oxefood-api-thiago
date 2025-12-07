@@ -117,6 +117,10 @@ public class ClienteService {
         repository.save(cliente);
     }
 
+    public EnderecoCliente obterEnderecoPorID(Long id) {
+        return enderecoClienteRepository.findById(id).get();
+    }
+
 
 
 }

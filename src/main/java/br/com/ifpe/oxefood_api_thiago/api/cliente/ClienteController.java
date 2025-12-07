@@ -78,6 +78,10 @@ public class ClienteController {
         return clienteService.listarEnderecosCliente(id);
     }
 
+    @GetMapping("/endereco/{id}")
+    public EnderecoCliente obterEnderecoPorID(@PathVariable Long id) {
+        return clienteService.obterEnderecoPorID(id);
+    }
 
 }
 
