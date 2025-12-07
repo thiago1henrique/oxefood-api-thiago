@@ -1,6 +1,7 @@
 package br.com.ifpe.oxefood_api_thiago.modelo.produto;
-import jakarta.transaction.Transactional;
 
+import br.com.ifpe.oxefood_api_thiago.util.exception.ProdutoException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +15,11 @@ public class ProdutoService{
 
     @Transactional
         public Produto save(Produto produto) {
-
-        produto.setHabilitado(Boolean.TRUE);
-        return repository.save(produto);
+            if (produto.getValorUnitario() < 10 && produto.getValorUnitario() > 100) {
+                throw new ProdutoException(ProdutoException.MSG_VALOR);
+            }
+            produto.setHabilitado(Boolean.TRUE);
+            return repository.save(produto);
     }
 
     public List<Produto> listarTodos() {

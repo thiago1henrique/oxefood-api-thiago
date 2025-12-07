@@ -4,6 +4,7 @@ import br.com.ifpe.oxefood_api_thiago.modelo.cliente.Cliente;
 import br.com.ifpe.oxefood_api_thiago.modelo.cliente.ClienteService;
 import br.com.ifpe.oxefood_api_thiago.modelo.enderecoCliente.EnderecoCliente;
 import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,28 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<Cliente> save(@RequestBody ClienteRequest request) {
+    public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest request) throws BadRequestException {
 
-        Cliente cliente = clienteService.save(request.build());
-        return new ResponseEntity<Cliente>(cliente, HttpStatus.CREATED);
+        Cliente clienteRequisicao = request.build();
+        StringBuilder erros = new StringBuilder();
+
+        //O campo nome não pode ser nulo e nem vazio
+        if (clienteRequisicao.getNome() == null || clienteRequisicao.getNome().equals("")) {
+            erros.append("O campo Nome é de preenchimento obrigatório. ");
+        }
+
+        if (clienteRequisicao.getFoneCelular() != null && (clienteRequisicao.getFoneCelular().length() < 8 || clienteRequisicao.getFoneFixo().length() > 20)) {
+            erros.append("O campo Fone tem que ter entre 8 e 20 caracteres. ");
+        }
+
+        if (erros.length() > 0) {
+            throw new BadRequestException(erros.toString());
+        }
+
+        Cliente clienteSalvo = clienteService.save(clienteRequisicao);
+        return new ResponseEntity<Cliente>(clienteSalvo, HttpStatus.CREATED);
     }
+
 
     @GetMapping
     public List<Cliente> listarTodos() {

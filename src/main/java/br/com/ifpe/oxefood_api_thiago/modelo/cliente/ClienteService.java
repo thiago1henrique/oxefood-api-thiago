@@ -2,12 +2,15 @@ package br.com.ifpe.oxefood_api_thiago.modelo.cliente;
 
 import br.com.ifpe.oxefood_api_thiago.modelo.enderecoCliente.EnderecoCliente;
 import br.com.ifpe.oxefood_api_thiago.modelo.enderecoCliente.EnderecoClienteRepository;
+import br.com.ifpe.oxefood_api_thiago.util.exception.ClienteDDD;
+import br.com.ifpe.oxefood_api_thiago.util.exception.EntidadeNaoEncontradaException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteService {
@@ -21,6 +24,10 @@ public class ClienteService {
     @Transactional
     public Cliente save(Cliente cliente) {
 
+        if (cliente.getFoneCelular() != null && !cliente.getFoneCelular().startsWith("(81)")) {
+            throw new ClienteDDD(); // Sua exceção personalizada
+        }
+
         cliente.setHabilitado(Boolean.TRUE);
         return repository.save(cliente);
     }
@@ -31,8 +38,14 @@ public class ClienteService {
     }
 
     public Cliente obterPorID(Long id) {
+        Optional<Cliente> consulta = repository.findById(id);
 
-        return repository.findById(id).get();
+        if (consulta.isPresent()) {
+            return consulta.get();
+        } else {
+            throw new EntidadeNaoEncontradaException("Cliente", id);
+        }
+
     }
 
     @Transactional
