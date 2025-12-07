@@ -1,5 +1,8 @@
 package br.com.ifpe.oxefood_api_thiago.modelo.cliente;
 
+import br.com.ifpe.oxefood_api_thiago.modelo.acesso.Perfil;
+import br.com.ifpe.oxefood_api_thiago.modelo.acesso.PerfilRepository;
+import br.com.ifpe.oxefood_api_thiago.modelo.acesso.UsuarioService;
 import br.com.ifpe.oxefood_api_thiago.modelo.enderecoCliente.EnderecoCliente;
 import br.com.ifpe.oxefood_api_thiago.modelo.enderecoCliente.EnderecoClienteRepository;
 import br.com.ifpe.oxefood_api_thiago.util.exception.ClienteDDD;
@@ -21,11 +24,25 @@ public class ClienteService {
     @Autowired
     private EnderecoClienteRepository enderecoClienteRepository;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private PerfilRepository perfilUsuarioRepository;
+
+
     @Transactional
     public Cliente save(Cliente cliente) {
 
         if (cliente.getFoneCelular() != null && !cliente.getFoneCelular().startsWith("(81)")) {
             throw new ClienteDDD(); // Sua exceção personalizada
+        }
+
+        usuarioService.save(cliente.getUsuario());
+
+        for (Perfil perfil : cliente.getUsuario().getRoles()) {
+            perfil.setHabilitado(Boolean.TRUE);
+            perfilUsuarioRepository.save(perfil);
         }
 
         cliente.setHabilitado(Boolean.TRUE);
