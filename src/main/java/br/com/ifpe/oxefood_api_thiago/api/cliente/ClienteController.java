@@ -1,8 +1,10 @@
 package br.com.ifpe.oxefood_api_thiago.api.cliente;
 
+import br.com.ifpe.oxefood_api_thiago.modelo.acesso.UsuarioService;
 import br.com.ifpe.oxefood_api_thiago.modelo.cliente.Cliente;
 import br.com.ifpe.oxefood_api_thiago.modelo.cliente.ClienteService;
 import br.com.ifpe.oxefood_api_thiago.modelo.enderecoCliente.EnderecoCliente;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +22,19 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
-    @PostMapping
-    public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest request) throws BadRequestException {
+    @Autowired
+    private UsuarioService usuarioService;
 
-        Cliente clienteRequisicao = request.build();
+
+    @PostMapping
+    public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest clienteRequest, HttpServletRequest request) throws BadRequestException {
+
+        // 1. Construímos o objeto cliente separadamente
+        Cliente clienteRequisicao = clienteRequest.build();
+
+        // Validações manuais (mantive sua lógica)
         StringBuilder erros = new StringBuilder();
 
-        //O campo nome não pode ser nulo e nem vazio
         if (clienteRequisicao.getNome() == null || clienteRequisicao.getNome().equals("")) {
             erros.append("O campo Nome é de preenchimento obrigatório. ");
         }
@@ -39,10 +47,11 @@ public class ClienteController {
             throw new BadRequestException(erros.toString());
         }
 
-        Cliente clienteSalvo = clienteService.save(clienteRequisicao);
+        // 2. Passamos o cliente E o usuário logado para o serviço (conforme Slide 19)
+        Cliente clienteSalvo = clienteService.save(clienteRequisicao, usuarioService.obterUsuarioLogado(request));
+
         return new ResponseEntity<Cliente>(clienteSalvo, HttpStatus.CREATED);
     }
-
 
     @GetMapping
     public List<Cliente> listarTodos() {
@@ -55,9 +64,9 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> update(@PathVariable("id") Long id, @RequestBody ClienteRequest request) {
+    public ResponseEntity<Cliente> update(@PathVariable("id") Long id, @RequestBody ClienteRequest clienteRequest, HttpServletRequest request) {
 
-        clienteService.update(id, request.build());
+        clienteService.update(id, clienteRequest.build(), usuarioService.obterUsuarioLogado(request));
         return ResponseEntity.ok().build();
     }
 

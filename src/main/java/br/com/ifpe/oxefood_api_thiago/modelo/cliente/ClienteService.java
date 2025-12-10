@@ -2,6 +2,7 @@ package br.com.ifpe.oxefood_api_thiago.modelo.cliente;
 
 import br.com.ifpe.oxefood_api_thiago.modelo.acesso.Perfil;
 import br.com.ifpe.oxefood_api_thiago.modelo.acesso.PerfilRepository;
+import br.com.ifpe.oxefood_api_thiago.modelo.acesso.Usuario;
 import br.com.ifpe.oxefood_api_thiago.modelo.acesso.UsuarioService;
 import br.com.ifpe.oxefood_api_thiago.modelo.enderecoCliente.EnderecoCliente;
 import br.com.ifpe.oxefood_api_thiago.modelo.enderecoCliente.EnderecoClienteRepository;
@@ -32,7 +33,7 @@ public class ClienteService {
 
 
     @Transactional
-    public Cliente save(Cliente cliente) {
+    public Cliente save(Cliente cliente, Usuario usuarioLogado) {
 
         if (cliente.getFoneCelular() != null && !cliente.getFoneCelular().startsWith("(81)")) {
             throw new ClienteDDD(); // Sua exceção personalizada
@@ -46,6 +47,7 @@ public class ClienteService {
         }
 
         cliente.setHabilitado(Boolean.TRUE);
+        cliente.setCriadoPor(usuarioLogado);
         return repository.save(cliente);
     }
 
@@ -66,7 +68,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public void update(Long id, Cliente clienteAlterado) {
+    public void update(Long id, Cliente clienteAlterado, Usuario usuarioLogado) {
 
         Cliente cliente = repository.findById(id).get();
         cliente.setNome(clienteAlterado.getNome());
@@ -75,6 +77,7 @@ public class ClienteService {
         cliente.setFoneCelular(clienteAlterado.getFoneCelular());
         cliente.setFoneFixo(clienteAlterado.getFoneFixo());
 
+        cliente.setUltimaModificacaoPor(usuarioLogado);
         repository.save(cliente);
     }
 
