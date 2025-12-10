@@ -1,5 +1,6 @@
 package br.com.ifpe.oxefood_api_thiago.config;
 
+import br.com.ifpe.oxefood_api_thiago.modelo.acesso.Perfil;
 import br.com.ifpe.oxefood_api_thiago.modelo.seguranca.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,25 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
 
                         .requestMatchers(HttpMethod.POST, "/api/cliente").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/funcionario").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/produto/").hasAnyAuthority(
+                                Perfil.ROLE_CLIENTE,
+                                Perfil.ROLE_FUNCIONARIO_ADMIN,
+                                Perfil.ROLE_FUNCIONARIO_USER) //Consulta de produto
+
+                        .requestMatchers(HttpMethod.POST, "/api/produto").hasAnyAuthority(
+                                Perfil.ROLE_FUNCIONARIO_ADMIN,
+                                Perfil.ROLE_FUNCIONARIO_USER) //Cadastro de produto
+
+                        .requestMatchers(HttpMethod.PUT, "/api/produto/*").hasAnyAuthority(
+                                Perfil.ROLE_FUNCIONARIO_ADMIN,
+                                Perfil.ROLE_FUNCIONARIO_USER) //Alteração de produto
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/produto/*").hasAnyAuthority(
+                                Perfil.ROLE_FUNCIONARIO_ADMIN) //Exclusão de produto
+
 
                         .requestMatchers(HttpMethod.GET, "/api-docs/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/*").permitAll()

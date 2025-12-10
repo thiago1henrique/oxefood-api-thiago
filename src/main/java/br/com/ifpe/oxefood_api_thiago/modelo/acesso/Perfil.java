@@ -1,7 +1,6 @@
 package br.com.ifpe.oxefood_api_thiago.modelo.acesso;
 
 import br.com.ifpe.oxefood_api_thiago.util.entity.EntidadeNegocio;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -22,7 +21,6 @@ public class Perfil extends EntidadeNegocio implements GrantedAuthority {
     public static final String ROLE_FUNCIONARIO_ADMIN = "ROLE_FUNCIONARIO_ADMIN"; // READ, DELETE, WRITE, UPDATE.
     public static final String ROLE_FUNCIONARIO_USER = "ROLE_FUNCIONARIO_USER"; // READ, WRITE, UPDATE.
 
-    @Column
     private String nome;
 
     @Override
@@ -31,3 +29,5 @@ public class Perfil extends EntidadeNegocio implements GrantedAuthority {
     }
 
 }
+
+
